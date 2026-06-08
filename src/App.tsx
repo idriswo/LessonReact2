@@ -2,7 +2,9 @@ import { memo } from 'react'
 
 const App = memo(() => {
   return (
-    <div>App</div>
+   <>
+   <h1>heello</h1>
+   </>
   )
 })
 
