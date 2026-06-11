@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 
 export interface data {
@@ -9,6 +9,8 @@ export interface data {
 
 export interface TodoState {
     data: data[],
+    title: string,
+    description: string,
 }
 
 const initialState: TodoState = {
@@ -24,29 +26,48 @@ const initialState: TodoState = {
             description: "nnnnnnnnnnn",
         }
     ],
+    title: "",
+    description: "",
 }
 
 export const todoSlice = createSlice({
     name: "todo",
     initialState,
     reducers: {
-        addTodo: (state, { payload }) => {
-            state.data.push(payload);
-        },
-        editTodo: (state, { payload }) => {
-            const index = state.data.findIndex((el) => el.id === payload.id);
-            if (index !== -1) {
-                state.data[index] = payload;
-            }
-        },
-        deleteTodo:(state ,{payload})=>{
+        
+        deleteTodo:(state ,{payload}: PayloadAction<number>)=>{
             state.data = state.data.filter((el)=>el.id !== payload )
         },
-        
+        inputTodo: (state, { payload }: PayloadAction<{ key: 'title' | 'description', value: string }>) => {
+            state[payload.key] = payload.value;
+        },
+        addTodo: (state) => {
+            state.data.push({
+                id: Date.now(),
+                title: state.title,
+                description: state.description,
+            });
+            state.title = '';
+            state.description = '';
+        },
+        editTodo: (state, { payload }: PayloadAction<number>) => {
+            state.data = state.data.map((el) => {
+                if (el.id === payload) {
+                    return { 
+                        id: payload,
+                        title: state.title,
+                        description: state.description,
+                    }
+                }
+                return el
+            });
+            state.title = "";
+            state.description = "";
+        }
     },
 })
 
-export const { addTodo, editTodo, deleteTodo } = todoSlice.actions
+export const { deleteTodo, inputTodo, addTodo, editTodo } = todoSlice.actions
 
 
 export default todoSlice.reducer
