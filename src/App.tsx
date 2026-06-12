@@ -1,8 +1,11 @@
 import { memo } from 'react'
+import CrudRZj from './pages/CrudRZj'
 
 const App = memo(() => {
   return (
-    <div>App</div>
+    <>
+    <CrudRZj/>
+    </>
   )
 })
 
