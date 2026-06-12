@@ -10,7 +10,7 @@ export interface DataRtkState {
  dataR:Datatype[]
  nameInput:string
  surnameInput:string
- searchQuery:string
+ search:string
 }
 
 const initialState: DataRtkState = {
@@ -21,7 +21,7 @@ const initialState: DataRtkState = {
  ],
  nameInput: "",
  surnameInput: "",
- searchQuery: ""
+ search: ""
  
 }
 
@@ -48,7 +48,7 @@ export const dataRtkSlice = createSlice({
     state.surnameInput = payload
    },
    setSearch : (state, {payload}:PayloadAction<string>)=>{
-    state.searchQuery = payload
+    state.search = payload
    },
    resetReduxInputs : (state)=>{
     state.nameInput = ""

@@ -55,7 +55,7 @@ const CrudRZj = memo(() => {
     const [addressInput, setAddressInput] = useAtom(addressAtom)
     const [statusInput, setStatusInput] = useAtom(statusAtom)
 
-    const { dataR, nameInput, surnameInput, searchQuery } = useSelector(({ dataRTK }: RootState) => dataRTK)
+    const { dataR, nameInput, surnameInput, search } = useSelector(({ dataRTK }: RootState) => dataRTK)
     const dispatch = useDispatch()
 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -143,7 +143,7 @@ const CrudRZj = memo(() => {
         setEditId(null);
     };
 
-    const filteredData = dataR.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredData = dataR.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
 
     const data = filteredData.map(el => {
         const zustandData = store.find((z) => z.id == el.id)
@@ -152,6 +152,8 @@ const CrudRZj = memo(() => {
         return { ...el, ...zustandData, ...atomData }
 
     });
+
+    const infoItem = data.find(d => d.id === infoId);
 
     return (
         <div className="min-h-screen bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-blue-50 p-8 text-slate-800 font-sans selection:bg-blue-200">
@@ -171,7 +173,7 @@ const CrudRZj = memo(() => {
                             </div>
                             <Input 
                                 placeholder="Search by name..." 
-                                value={searchQuery} 
+                                value={search} 
                                 onChange={(e) => dispatch(setSearch(e.target.value))}
                                 className="pl-10 w-full sm:w-80 rounded-2xl border-slate-200 bg-white shadow-sm focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all duration-300 h-11"
                             />
@@ -298,61 +300,53 @@ const CrudRZj = memo(() => {
 
                 <Dialog open={infoId !== null} onOpenChange={(open) => { if (!open) setInfoId(null); }}>
                     <DialogContent className="sm:max-w-md rounded-3xl border-slate-100 shadow-2xl p-0 overflow-hidden bg-white/95 backdrop-blur-xl">
-                        {(() => {
-                            const infoItem = data.find(d => d.id === infoId);
-                            if (!infoItem) return null;
-                            return (
-                                <>
-                                    <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                                        <DialogHeader>
-                                            <DialogTitle className="text-2xl font-bold text-slate-800">User Details</DialogTitle>
-                                            <DialogDescription className="text-slate-500">
-                                                Detailed information about this user.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                    </div>
-                                    <div className="p-6 space-y-4">
-                                        <div className="flex items-center gap-4 mb-6">
-                                            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold text-2xl border border-indigo-200/50 shadow-sm">
-                                                {infoItem.name.charAt(0)}{infoItem.surname.charAt(0)}
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-bold text-slate-800">{infoItem.name} {infoItem.surname}</h3>
-                                                <p className="text-slate-500 font-medium">ID: #{infoItem.id}</p>
-                                            </div>
+                        {infoItem && (
+                            <>
+                                <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                                    <DialogHeader>
+                                        <DialogTitle className="text-2xl font-bold text-slate-800">User Info</DialogTitle>
+                                    </DialogHeader>
+                                </div>
+                                <div className="p-6 space-y-4">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="h-16 w-16 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold text-2xl border border-indigo-200/50 shadow-sm">
+                                            {infoItem.name.charAt(0)}{infoItem.surname.charAt(0)}
                                         </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Job Title</span>
-                                                <p className="text-slate-800 font-medium mt-1">{infoItem.job}</p>
-                                            </div>
-                                            <div>
-                                                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Age</span>
-                                                <p className="text-slate-800 font-medium mt-1">{infoItem.age}</p>
-                                            </div>
-                                            <div className="col-span-2">
-                                                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Address</span>
-                                                <p className="text-slate-800 font-medium mt-1">{infoItem.address}</p>
-                                            </div>
-                                            <div className="col-span-2">
-                                                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Status</span>
-                                                <div className="mt-1">
-                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${infoItem.status ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${infoItem.status ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-400'}`}></span>
-                                                        {infoItem.status ? "Active" : "Offline"}
-                                                    </span>
-                                                </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-slate-800">{infoItem.name} {infoItem.surname}</h3>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Job Title</span>
+                                            <p className="text-slate-800 font-medium mt-1">{infoItem.job}</p>
+                                        </div>
+                                        <div>
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Age</span>
+                                            <p className="text-slate-800 font-medium mt-1">{infoItem.age}</p>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Address</span>
+                                            <p className="text-slate-800 font-medium mt-1">{infoItem.address}</p>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Status</span>
+                                            <div className="mt-1">
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${infoItem.status ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${infoItem.status ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-400'}`}></span>
+                                                    {infoItem.status ? "Active" : "Offline"}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end">
-                                        <DialogClose asChild>
-                                            <Button type="button" variant="outline" className="rounded-xl font-medium px-5 h-10 hover:bg-slate-100">Close</Button>
-                                        </DialogClose>
-                                    </div>
-                                </>
-                            );
-                        })()}
+                                </div>
+                                <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+                                    <DialogClose asChild>
+                                        <Button type="button" variant="outline" className="rounded-xl font-medium px-5 h-10 hover:bg-slate-100">Close</Button>
+                                    </DialogClose>
+                                </div>
+                            </>
+                        )}
                     </DialogContent>
                 </Dialog>
 
