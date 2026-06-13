@@ -19,19 +19,16 @@ export const dataSlice = createSlice({
   name: 'data',
   initialState: initialState,
   reducers: {
-    // Илова кардан
     addRTKUser: (state, action: PayloadAction<RTKUser>) => {
       state.data.push(action.payload);
     },
-    // Нест кардан
     deleteRTKUser: (state, action: PayloadAction<number>) => {
       state.data = state.data.filter((u) => u.id !== action.payload);
     },
-    // Таҳрир кардан
     editRTKUser: (state, action: PayloadAction<RTKUser>) => {
       state.data = state.data.map((u) => {
         if (u.id === action.payload.id) {
-          return action.payload; // Агар ID ёфт шуд, маълумоти навро мегузорем
+          return action.payload;
         }
         return u;
       });
